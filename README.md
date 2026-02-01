@@ -53,7 +53,7 @@ VERA is structured as a sequential pipeline of six modules. Each module is desig
 ### Orchestration
 
 - **Main Analysis** (`vera_main.py`): Runs the core pipeline. 
-- **Complete System** (`vera_complete_with_memo.py`): Runs the core pipeline and memo generation. 
+- **Complete System** (`run_demo.py`): Runs the core pipeline and memo generation. 
 
 ## Methodology
 
@@ -149,7 +149,7 @@ Extends basic analysis with automated investment memo generation. Prompts for Op
 ```
 vera_system/
 ├── vera_main.py                    # Main orchestrator
-├── vera_complete_with_memo.py      # Extended system with memo
+├── run_demo.py                     # Extended system with memo
 ├── downloader.py                   # Data retrieval module
 ├── ratios.py                       # Financial ratio analysis
 ├── dcf.py                          # DCF valuation model

@@ -198,10 +198,6 @@ Generates professional PDF report.
 
 **Returns:** Path to generated PDF file.
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
@@ -226,6 +222,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 📧 Contact
 
 For questions or feedback, please open an issue on GitHub.
+
+or email to : vivi.sampelan.25@ucl.ac.uk
 
 ---
 

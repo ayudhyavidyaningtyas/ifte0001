@@ -1,0 +1,35 @@
+{
+  "symbol": "GOOG",
+  "company_name": "Alphabet Inc.",
+  "analysis_date": "2026-02-01T09:21:56.747961",
+  "current_price": 338.53,
+  "target_price": 318.21,
+  "recommendation": {
+    "recommendation": "HOLD",
+    "confidence": "Medium",
+    "target_price": 334.26312435999995,
+    "current_price": 338.53,
+    "expected_return": -1.2604128555814915,
+    "reasoning": [
+      "Price target implies -1.3% upside/downside",
+      "Overall market sentiment is neutral"
+    ],
+    "positive_catalysts": 0,
+    "negative_catalysts": 0,
+    "sentiment": "neutral"
+  },
+  "catalysts": {
+    "catalysts": [],
+    "overall_sentiment": "neutral"
+  },
+  "price_breakdown": {
+    "base_price": 334.26312435999995,
+    "catalyst_adjustment_pct": 0
+  },
+  "news_count": 0,
+  "valuation_components": {
+    "dcf_value": 324.78,
+    "peer_value": 311.64,
+    "final_integrated_value": 318.21
+  }
+}

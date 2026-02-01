@@ -1,174 +1,213 @@
-# VERA: Valuation & Equity Research Assistant
+# VERA — Valuation & Equity Research Assistant
+
+An AI-powered equity research system that automates fundamental analysis, DCF valuation, relative valuation, and institutional-quality report generation for publicly traded companies.
+
+---
+
+## Table of Contents
+
+1. [Overview](#overview)
+2. [Architecture](#architecture)
+3. [Prerequisites](#prerequisites)
+4. [Setup](#setup)
+5. [How to Run](#how-to-run)
+6. [Module Breakdown](#module-breakdown)
+7. [API Keys](#api-keys)
+8. [Output Files](#output-files)
+9. [Contact](#contact)
+
+---
 
 ## Overview
-VERA is an automated equity research workflow that combines data retrieval, financial statement analysis, and multiple valuation approaches into a single, reproducible pipeline. It is designed to help fundamental analysis where transparency of assumptions and consistency of outputs matter as much as speed.
 
-At a high level, VERA pulls accounting data and market data, computes standard ratio diagnostics, runs several valuation methods (intrinsic and relative), optionally produces a research-note style report that synthesises outputs into an investment view.
+VERA performs end-to-end equity research in a single run:
 
-## System Architecture
+1. Downloads financial statements (Income Statement, Balance Sheet, Cash Flow) from **Alpha Vantage**
+2. Pulls live market data (price, market cap, shares, beta) from **Yahoo Finance**
+3. Calculates financial ratios (profitability, liquidity, leverage, efficiency)
+4. Runs a **Discounted Cash Flow (DCF)** valuation with WACC and sensitivity analysis
+5. Performs **relative valuation** using peer multiples (P/E, EV/EBITDA, P/S)
+6. Generates **12-month and 18-month target prices** using forward P/E peer-relative methodology
+7. Produces a professional **HTML research note** with an AI-generated investment memo (via OpenAI GPT-4o)
 
-VERA is structured as a sequential pipeline of six modules. Each module is designed to ingest shared inputs and produce structured outputs.
+---
 
-### Core Modules
+## Architecture
 
-1. **Financial Data Downloader** (`downloader.py`)
-   - Retrieves financial statements from Alpha Vantage API
-   - Enhanced with market data from Yahoo Finance (e.g., price and valuation fields where available).
-   - Computes trailing twelve months (TTM) figures to support near-term ratio and valuation work.
-   - Single API call architecture minimises data retrieval and "over-using" the API calls to Alpha Vantage, making it more efficient.
+```
+vera_main.py          ← Entry point; orchestrates the full pipeline
+│
+├── downloader.py     ← Alpha Vantage API client + Yahoo Finance market data
+├── ratios.py         ← Financial ratio calculations & Excel export
+├── dcf.py            ← DCF model (WACC via CAPM, sensitivity tables)
+├── relative.py       ← Peer multiples valuation + DDM
+├── target.py         ← 12M / 18M target price engine (forward P/E)
+├── memo_generator.py ← HTML report builder + OpenAI investment memo
+└── run_demo.py       ← Wrapper that calls vera_main then generates the memo
+```
 
+**Execution flow:**
 
-2. **Ratio Analysis** (`ratios.py`)
-   - Calculates 40+ financial ratios across six categories
-   - Categories: Profitability, Liquidity, Leverage, Efficiency, Cash Flow, Valuation
-   - Supports multi-period comparative analysis
-   - Exports results to Excel workbooks
+```
+run_demo.py
+  └→ vera_main.main()          # Steps 1–6 (no OpenAI needed)
+       └→ downloader            # Alpha Vantage + yfinance
+       └→ ratios                # Ratio analysis
+       └→ dcf                   # DCF valuation
+       └→ relative              # Peer multiples
+       └→ target                # Target prices
+  └→ memo_generator             # Step 7 (requires OpenAI key, entered at runtime)
+```
 
-3. **DCF Valuation** (`dcf.py`)
-   - Implements 10-year discounted cash flow model
-   - Three scenario framework: Bear, Base, Bullish
-   - Synthetic credit rating methodology for cost of debt estimation 
-   - Downloads Beta and adjust it to Blume-adjusted Beta
-   - Downloads US 10Y Treasury yield (spot) as risk free rate
-   - Sensitivity analysis across WACC and terminal growth rate dimensions
+---
 
-4. **Relative Valuation** (`relative.py`)
-   - Peer-based multiple analysis (P/E, EV/EBITDA, P/S)
-   - Applies outlier control using an interquartile-range filter to reduce extreme observations
-   - Implements dividend discount model as supplementary methodology
+## Prerequisites
 
-5. **Target Price Analysis** (`target.py`)
-   - Forward P/E methodology with 12-month horizon
-   - Dynamic scenario generation based on current market multiples (forward P/E)
-   - Five-scenario framework from Very Bear to Very Bull
-   - Adjusts earnings estimates and P/E premiums independently
+| Package | Purpose |
+|---|---|
+| `pandas` | Data manipulation |
+| `numpy` | Numerical calculations |
+| `requests` | Alpha Vantage API calls |
+| `yfinance` | Yahoo Finance market data & peer data |
+| `openpyxl` | Excel export |
+| `matplotlib` | Performance chart in the report |
+| `openai` | GPT-4o memo generation (Step 7 only) |
+| `python-dateutil` | Date arithmetic in target price module |
 
-6. **Investment Memo Generator** (`memo_generator.py`) - OpenAI API Key needed.
-   - Automated research note generation using GPT-4 (OpenAI)
-   - Automated qualitative analysis using GPT-4
-   - Converts outputs into a structured narrative such as business context, thesis and key drivers, valuation, risks and catalysts. 
-   - Produces professional HTML reports with embedded visualisations
-   - Implements blended valuation (DCF, target price, and qualitative analysis). 
-
-### Orchestration
-
-- **Main Analysis** (`vera_main.py`): Runs the core pipeline. 
-- **Complete System** (`run_demo.py`): Runs the core pipeline and memo generation. 
-
-## Methodology
-
-### Data Architecture
-
-VERA follows a single-ingestion architecture: financial statement data is downloaded once and then passed through the pipeline. This reduces the chance of internal inconsistencies (e.g., ratios computed from one dataset and valuations computed from another) and keeps API usage minimal. 
-
-### Valuation Framework
-
-The system implements four independent valuation methodologies, each contributing distinct analytical perspectives:
-
-**Discounted Cash Flow (DCF)**: The model projects free cash flow over a decade and discounts using WACC (Beta and Risk free rate downloaded; Cost of debt using synthetic rating based on interest coverage ratio). Terminal value is estimated via a perpetuity growth model (Gordon-growth Model). 
-
-**Relative Valuation**: Compares trailing multiples (P/E, EV/EBITDA, P/S) against peer median. Applies statistical filters to exclude outliers beyond 1.5 times interquartile range. Weights equally across three multiples to derive consensus relative value.
-
-**Forward Target Price**: Uses analyst consensus earnings estimates to project next-twelve-month EPS. Calculates target P/E as function of peer median adjusted for company-specific premium. Bear case is set to current forward P/E. 
-
-**Qualitative Assessment**: Used to incorporate non-financial drivers that are typically discussed in equity research (moat, execution quality, market position). In VERA, the qualitative output is implemented as a scoring rubric that can be mapped into a valuation adjustment. This analysis is done by LLM. 
-
-### Investment Memo Synthesis
-
-The memo generator implements a weighted blended valuation:
-- Forward P/E (70%): Primary method given reliance on consensus forecasts
-- Qualitative Assessment (20%): To capture market sentiments and competitiveness
-- DCF Base Case (10%): Long-term intrinsic value
-This weighting prioritises near-term consensus.
-
-## Installation
-
-### Prerequisites
-
-- Python 3.8 or higher
-- Alpha Vantage API key (free tier sufficient, already hard-coded to the python files)
-- OpenAI API key (optional, required only for memo generation)
-
-### Dependencies
+Install all at once:
 
 ```bash
-pip install pandas numpy yfinance openpyxl openai matplotlib requests
+pip install pandas numpy requests yfinance openpyxl matplotlib openai python-dateutil
 ```
 
-### Configuration
+---
 
-Update API key in `vera_main.py` line 4:
-```python
-API_KEY = "YOUR_ALPHA_VANTAGE_KEY"
-```
+## Setup
 
-## Usage
+1. **Clone or copy** all `.py` files into the same directory.
+2. **Set your Alpha Vantage API key** in `vera_main.py`:
+   ```python
+   # vera_main.py, line 6
+   API_KEY = "YOUR_ALPHA_VANTAGE_KEY"
+   ```
+   Free key → [https://www.alphavantage.co/support/#api-key](https://www.alphavantage.co/support/#api-key)
 
-### Basic Analysis
+3. *(Optional)* Have an **OpenAI API key** ready — it is entered interactively at runtime when you choose to generate the memo.
 
-Execute complete financial analysis without memo generation:
+---
+
+## How to Run
+
+### Basic Analysis (no memo)
+
+Runs all four valuation methods and exports Excel outputs. No OpenAI key required.
 
 ```bash
 python vera_main.py
 ```
 
-Prompts for ticker symbol and runs all four valuation methods. Generates Excel workbook with comprehensive ratio analysis. Total API consumption: 1 Alpha Vantage call.
-
 ### Complete Analysis with Memo
 
-Execute analysis and generate professional research note:
+Runs the full pipeline and generates the professional HTML research note. Requires an OpenAI API key at runtime.
 
 ```bash
 python run_demo.py
 ```
 
-Extends basic analysis with automated investment memo generation. Prompts for OpenAI API key at runtime. Total API consumption: 1 Alpha Vantage + 1-2 OpenAI calls.
+You will be prompted to:
+1. **Enter a ticker symbol** (e.g., `GOOGL`, `MSFT`, `AAPL`)
+2. After analysis completes, **choose whether to generate the memo** (`Y/N`)
+3. If yes, **paste your OpenAI API key** when prompted
 
-### Output Files
+> **Rate limit note:** Alpha Vantage free-tier allows 5 API calls/minute and 25/day. The downloader includes a 12-second delay between calls to stay within limits.
 
-- `{TICKER}_financialdata.xlsx`
-- `{TICKER}_ratio_analysis.xlsx`
-- `{TICKER}_Research_Note.html`
+---
 
-### Memo Generation Process
+## Module Breakdown
 
-1. Output collection and aggregation from all analytical modules
-2. Fundamental scoring via GPT-4 with constrained rubric (10-point scale)
-3. Blended valuation calculation through pre-determined percentages
-4. LLM-powered thesis generation (1,300+ words) with embedded quantitative metrics
-5. Chart generation comparing performance to benchmarks and peers
+### `downloader.py` — `AlphaVantageDownloader`
 
-### Computational Requirements
+Handles all data ingestion.
 
-- Memo generation requires 30-60 seconds due to GPT-4 API latency
-- Chart rendering requires matplotlib backend compatibility
-- Excel export requires openpyxl write permissions
+- Calls Alpha Vantage for Income Statement, Balance Sheet, and Cash Flow (annual + quarterly)
+- Calculates **TTM (Trailing Twelve Months)** by summing the four most recent quarters
+- Fetches live market data from Yahoo Finance (`impliedSharesOutstanding` is used to handle dual-class share structures like Alphabet's GOOG/GOOGL)
+- Exports raw financial data to an Excel workbook
 
-## File Structure
+### `ratios.py` — `RatioAnalyzer`
 
-```
-vera_system/
-├── vera_main.py                    # Main orchestrator
-├── run_demo.py                     # Extended system with memo
-├── downloader.py                   # Data retrieval module
-├── ratios.py                       # Financial ratio analysis
-├── dcf.py                          # DCF valuation model
-├── relative.py                     # Relative valuation & DDM
-├── target.py                       # Forward target price
-├── memo_generator.py               # Automated report generation
-└── README.md                       # Documentation
-```
+Computes and exports financial ratios across all available periods:
 
-## References
+- **Profitability:** Gross Margin, Operating Margin, Net Margin, EBITDA Margin, ROA, ROE
+- **Liquidity:** Current Ratio, Quick Ratio
+- **Leverage:** Debt-to-Equity, Debt-to-Assets, Interest Coverage
+- **Efficiency:** Asset Turnover
+- **Market:** P/E, EV/EBITDA, P/S, Dividend Yield
 
-### Data Sources
+Results are saved to `{TICKER}_ratios.xlsx`.
 
-- Alpha Vantage API: Financial statement data
-- Yahoo Finance: Market data and analyst estimates
-- OpenAI GPT-4: Natural language generation for investment thesis
+### `dcf.py` — `DCFModel`
 
-## Notes
+Performs a full Discounted Cash Flow valuation:
 
-### API Rate Limits
+- **WACC calculation** using CAPM (risk-free rate fetched live from ^TNX, equity risk premium from Damodaran benchmarks)
+- Projects Free Cash Flow for 5 years using historical FCF margins and revenue growth
+- Applies a terminal value with the Gordon Growth Model
+- Generates a **sensitivity table** varying WACC and terminal growth rate
+- Returns the base-case intrinsic value per share
 
-Alpha Vantage free tier: 5 calls per minute, 25 calls per day. System architecture enables 25 complete analyses daily through single-call efficiency.
+### `relative.py` — Peer Multiples & DDM
+
+Runs a market-relative valuation:
+
+- Fetches trailing P/E, EV/EBITDA, and P/S for **core peers** (MSFT, AAPL, META) and an extended set
+- Applies outlier filters before computing medians
+- Derives implied share prices from each multiple
+- Includes a **Dividend Discount Model (DDM)** section (noted as non-primary for low-payout companies like Alphabet)
+
+### `target.py` — Target Price Engine
+
+Produces **12-month and 18-month target prices**:
+
+- Fetches forward EPS estimates from Yahoo Finance (with fallbacks to growth-rate projections)
+- Uses **peer-relative forward P/E** methodology: the target company's forward P/E is benchmarked against peer medians
+- Outputs a summary table and sensitivity analysis for both horizons
+
+### `memo_generator.py` — HTML Report Builder
+
+Assembles the final institutional-style research note:
+
+- Generates a **1-year performance chart** (normalised returns vs. S&P 500, NASDAQ, and peers)
+- Calls **GPT-4o** to write the qualitative investment thesis, risk factors, and rating rationale
+- Combines all valuation outputs (DCF, multiples, target prices) into a professionally formatted **HTML document**
+- The output file is saved as `{TICKER}_Research_Note.html`
+
+---
+
+## API Keys
+
+| Key | Where to set | Notes |
+|---|---|---|
+| **Alpha Vantage** | `vera_main.py` line 6 (`API_KEY`) | Free tier: 25 calls/day. Sufficient for one full analysis. |
+| **OpenAI** | Entered at runtime when prompted | Only needed for the memo/report. GPT-4o is used. |
+
+> ⚠️ Do not commit API keys to version control. Consider moving them to environment variables for production use.
+
+---
+
+## Output Files
+
+After a full run you will find:
+
+| File | Generated by | Contents |
+|---|---|---|
+| `{TICKER}_financialdata.xlsx` | `downloader.py` | Raw Income Statement, Balance Sheet, Cash Flow + market data |
+| `{TICKER}_ratios.xlsx` | `ratios.py` | All calculated financial ratios by period |
+| `{TICKER}_Research_Note.html` | `memo_generator.py` | The final institutional research report (open in any browser) |
+
+---
+
+## Contact
+
+**Ayudhya Vidyaningtyas**
+ayudhya.vidyaningtyas.25@ucl.ac.uk

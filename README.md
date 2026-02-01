@@ -1,4 +1,4 @@
-# 📊 AI-Powered Financial Analysis Agents
+# 📊 AI Analyst Agents in Asset Management
 ---
 ***Introduction to Financial Markets (IFTE0001)***
 

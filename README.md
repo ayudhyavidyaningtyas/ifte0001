@@ -52,7 +52,7 @@ The project involved creating AI-powered agents that leverage Large Language Mod
 
 ## ⚙️ Key Features
 
-- **Data Integration:** Agents utilize various data sources including AlphaVantage, Yahoo Finance, and Google Finance
+- **Data Integration:** Agents utilize various data sources including AlphaVantage and Yahoo Finance
 - **Valuation Methods:** DCF analysis, multiples-based valuation (P/E, P/B, P/S, EV/EBITDA), technical indicators
 - **LLM Integration:** OpenAI GPT-4, Google Gemini, Langchain for narrative generation and analysis
 - **Analysis Approaches:** Both fundamental (financial ratios, DCF, qualitative analysis) and technical (RSI, MACD, MA, trend analysis)
@@ -60,7 +60,7 @@ The project involved creating AI-powered agents that leverage Large Language Mod
 
 ## 🖥️ Technologies Used
 
-- **Data Sources:** AlphaVantage, Yahoo Finance, Google Finance
+- **Data Sources:** AlphaVantage, Yahoo Finance
 - **LLM Models:** OpenAI GPT-4, Google Gemini
 - **Frameworks:** Langchain
 - **Analysis Methods:** DCF valuation, Technical indicators, CAPM, Sensitivity analysis

@@ -1,0 +1,19 @@
+{
+  "ticker": "GOOGL",
+  "company_name": "Alphabet Inc.",
+  "latest_year": "2024",
+  "revenue_latest": 350018.0,
+  "net_income_latest": 100118.0,
+  "fcf_latest": null,
+  "implied_price_dcf": 279.9765340278849,
+  "implied_price_relative": 300.80611894121694,
+  "assumptions": {
+    "short_term_growths": [
+      0.1,
+      0.08,
+      0.06,
+      0.05,
+      0.04
+    ]
+  }
+}

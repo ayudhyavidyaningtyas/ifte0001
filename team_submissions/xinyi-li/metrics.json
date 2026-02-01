@@ -1,0 +1,33 @@
+{
+  "strategy_config": {
+    "ticker": "GOOGL",
+    "ma_short": 10,
+    "ma_long": 30,
+    "rsi_window": 14,
+    "position_cap": 0.7,
+    "transaction_cost": 0.001,
+    "trade_threshold": 0.1
+  },
+  "backtest_results": {
+    "CAGR": 0.15599814474262041,
+    "Sharpe": 0.9059404771073941,
+    "Max_Drawdown": -0.3105797835857743,
+    "WinRate_Daily": 0.5365853658536586
+  },
+  "data_quality": {
+    "total_records": 2781,
+    "critical_cols_nulls": {
+      "Close": 0,
+      "MA10": 0,
+      "MA30": 0,
+      "RSI": 0,
+      "MACD": 0,
+      "Position": 0
+    },
+    "data_integrity_check": {
+      "has_nans": false,
+      "price_range": "$24.67 - $335.97",
+      "position_range": "0.00% - 70.00%"
+    }
+  }
+}

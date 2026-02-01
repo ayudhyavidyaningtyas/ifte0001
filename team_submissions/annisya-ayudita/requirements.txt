@@ -1,0 +1,23 @@
+# Equity Research AI Agent - Requirements
+# Python 3.10+ recommended
+
+# Data & Financial Analysis
+yfinance>=0.2.36
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Visualization
+matplotlib>=3.7.0
+
+# Excel Export
+openpyxl>=3.1.0
+
+# LLM Integration (Google Gemini)
+google-generativeai>=0.3.0
+
+# Jupyter Notebook (for interactive use)
+jupyter>=1.0.0
+ipython>=8.0.0
+
+# Optional: For enhanced display
+ipywidgets>=8.0.0

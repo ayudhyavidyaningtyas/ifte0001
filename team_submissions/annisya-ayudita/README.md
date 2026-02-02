@@ -9,7 +9,7 @@
 
 ## Project Overview
 
-This model represents an AI agent, that designed to conduct fundamental equity analysis in support of investment decision making process. The agent automates equity research by combining:
+This model represents an AI agent, that is designed to conduct fundamental equity analysis in support of investment decision making process. The agent automates equity research report generation by combining:
 
 1. **Intrinsic Valuation**: FCFF-based Discounted Cash Flow (DCF) model
 2. **Relative Valuation**: Forward P/E multiples analysis

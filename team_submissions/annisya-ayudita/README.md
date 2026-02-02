@@ -1,21 +1,21 @@
-# Equity Research AI Agent — Fundamental Analyst (Annisya Putri Ayudita)
+# Equity Research AI Agent — Fundamental Analysis (Annisya Putri Ayudita)
 
 **Author:** Annisya Putri Ayudita  
 **Module:** IFTE0001 - Introduction to Financial Markets 25/26  
-**Agent Type:** Fundamental Analyst Agent  
+**Agent Type:** Fundamental Analysis Agent  
 **Target Company:** Alphabet Inc. (GOOGL)
 
 ---
 
 ## Project Overview
 
-This project implements an AI-powered Fundamental Analyst Agent. The agent automates equity research by combining:
+This model represents an AI-driven agent designed to conduct fundamental equity analysis in support of the investment decision making process. The agent automates equity research by combining:
 
 1. **Intrinsic Valuation** — FCFF-based Discounted Cash Flow (DCF) model
 2. **Relative Valuation** — Forward P/E multiples analysis
-3. **LLM-Generated Research Report** — Professional equity research memo via Google Gemini
+3. **LLM-Generated Research Report** — Generating equity research memo using Google Gemini API
 
-The agent ingests 5 years of historical financial data, computes comprehensive financial ratios, performs valuation analysis with Bear/Base/Bull scenarios, and generates a professional 2-page equity research report with investment recommendations.
+The agent ingests 5 years of historical financial data, computes comprehensive financial ratios, performs valuation analysis with Bear/Base/Bull scenarios, and generates a 2-page equity research report with investment recommendations.
 
 **Key Features**:
 
@@ -48,7 +48,7 @@ The agent ingests 5 years of historical financial data, computes comprehensive f
 
 ### Prerequisites
 - Python 3.10 or higher
-- Google Gemini API Key (free tier available)
+- Google Gemini API Key
 - Optional: Jupyter Notebook or JupyterLab 
 
 
@@ -82,14 +82,14 @@ pip install -r requirements.txt
 
 ### Step 4: Obtain Gemini API Key
 1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
-2. Create a free API key
+2. Create an API key
 3. Keep the key ready for input when running the demo
 
 ---
 
 ## Running the Demo
 
-### Option A: Quick Demo Script 
+### Option A: Demo Script 
 ```bash
 python run_demo.py
 ```
@@ -116,7 +116,7 @@ Run all cells sequentially. The notebook provides detailed explanations and inte
 - Sources: Yahoo Finance API via `yfinance` library
 
 ### 2. Financial Ratio Analysis
-Computes 30+ ratios across categories:
+Computes financial ratios across categories:
 - **Profitability:** Gross Margin, Operating Margin, Net Margin, ROA, ROE, ROIC
 - **Liquidity:** Current Ratio, Quick Ratio, Cash Ratio
 - **Leverage:** Debt/Equity, Interest Coverage, Net Debt/EBITDA
@@ -136,7 +136,7 @@ Computes 30+ ratios across categories:
 
 ### 5. LLM Report Generation
 - Uses Google Gemini (gemini-2.5-flash or later)
-- Generates professional equity research memo
+- Generates equity research memo
 - Includes: Business Overview, Investment Thesis, Valuation Summary, Risks
 - Output: 2-page HTML report with charts and tables
 
@@ -146,8 +146,8 @@ Computes 30+ ratios across categories:
 
 | File | Description |
 |------|-------------|
-| `Equity_Research_Report_GOOGL_YYYYMMDD.html` | Professional 2-page equity research report |
-| Console output | Summary of valuation metrics and recommendation |
+| `Equity_Research_Report_{TICKER}_YYYYMMDD.html` | Professional 2-page Equity Research Report |
+| `Equity_Research_AI_Agent_{TICKER}_Valuation_Model.xlsx` | Excel workbook with financial ratios, DCF projections, Multiples, and valuation summary |
 
 ---
 

@@ -11,9 +11,9 @@
 
 This model represents an AI-driven agent designed to conduct fundamental equity analysis in support of the investment decision making process. The agent automates equity research by combining:
 
-1. **Intrinsic Valuation** — FCFF-based Discounted Cash Flow (DCF) model
-2. **Relative Valuation** — Forward P/E multiples analysis
-3. **LLM-Generated Research Report** — Generating equity research memo using Google Gemini API
+1. **Intrinsic Valuation**: FCFF-based Discounted Cash Flow (DCF) model
+2. **Relative Valuation**: Forward P/E multiples analysis
+3. **LLM-Generated Research Report**: Generating equity research memo using Google Gemini API
 
 The agent ingests 5 years of historical financial data, computes comprehensive financial ratios, performs valuation analysis with Bear/Base/Bull scenarios, and generates a 2-page equity research report with investment recommendations.
 
